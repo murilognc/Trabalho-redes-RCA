@@ -31,6 +31,9 @@ public class telaTrabalhoController implements Initializable {
 	BufferedReader msgEnvio;
 	InetAddress IP;
 	DatagramSocket clientSocket;
+	String aux;
+	String msgRecebida;
+	String usuario = "";
 	
 	//Parte configurações
 	@FXML TextField diretorioRaiz;
@@ -100,27 +103,56 @@ public class telaTrabalhoController implements Initializable {
 			Mensagem.exibirMensagem(AlertType.INFORMATION,"Comando Fechar", "O Peer foi encerrado.");
     		break;
     		
-    	case "Descoberta":
-    		clientSocket.send(noInicial.pacote(msg, InetAddress.getByName("255.255.255.255"), socketRecebimento));
+    	case "Arquivos":
+    		aux = "";
+    		clientSocket.send(noInicial.pacote(comando, InetAddress.getByName("255.255.255.255"), socketRecebimento));
 			String msgRecebida = "";
 
 			do {
 
 
 				msgRecebida = noInicial.pacoteRecebido(clientSocket, msgRecebida);
+				aux += "De["+IPrecebido+"]: " + msgRecebida + " \n";
 				System.out.println("De["+IPrecebido+"]: " + msgRecebida);
 
 			}while(!"Fim do envio".equals(msgRecebida.trim()) && !"IniciarTCP".equals(msgRecebida.trim()));
-
-			System.out.println("Mensagem completa");
 			
+			//atualizar dados interface
+			aux += "Mensagem completa \n";
+			System.out.println("Mensagem completa");
+			atualizarTextAreaServidor(aux);
 			break;
     	case "IniciarTCP":
-    		
-    		
+    		aux = "";
+    		msgRecebida = comandoTcp.getText();
+    		usuario = msgRecebida.trim().substring(11,  noInicial.marcador(msgRecebida));
+    		System.out.println("Iniciando cliente TCP");
+    		aux += "Iniciando cliente tcp \n";
+			System.out.println("Iniciando conexão com o servidor");
+			aux += "Iniciando conexão com o servidor \n";
+			Socket socket = new Socket (usuario, SOCKETSERVIDOR_RECEBER);
+
+			System.out.println("\n Conexão estabelecida");
+			aux += "Conexão estabelecida \n";
+			atualizarTextAreaServidor(aux);
+			InputStream input = socket.getInputStream();
+			OutputStream output = socket.getOutputStream();
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(input));
+			PrintStream out = new PrintStream(output);
+			
+    		enviarTcp(in, out, input, socket);
     		break;
-    		
+    	
+    	case "log":
+    		aux = noInicial.log;
+    		atualizarTextAreaServidor(aux);
+    		break;
+    	
     	default:
+    		noInicial.stop();
+    		aux = "Encerrando conexão.";
+    		atualizarTextAreaServidor(aux);
     		break;
     		
     	}
@@ -128,9 +160,35 @@ public class telaTrabalhoController implements Initializable {
     }
     
     //Enviar uma mensagem TCP
-    @FXML
-    public void enviarTcp() throws Exception{
-    	
+    public void enviarTcp(BufferedReader in, PrintStream out, InputStream input, Socket socket) throws Exception{
+    	aux = "";
+    	String mensagem = comandoTcp.getText();
+    	out.println(mensagem);
+
+
+
+		if("Fechar".equals(mensagem)){
+			in.close();
+			out.close();
+			socket.close();
+			return;
+		}
+
+		//mensagem = in.readLine();
+		//System.out.println(mensagem);
+
+		if ("Arquivo não encontrado".equals(mensagem)){
+			atualizarTextAreaServidor(aux);
+			System.out.println(mensagem);
+
+		} else { 
+
+			noInicial.receiveFile(input, mensagem);
+
+		}
+		aux = "Mensagem recebida do servidor: " + mensagem;
+		atualizarTextAreaServidor(aux);
+		System.out.println("Mensagem recebida do servidor: " + mensagem);
     	
     	
     }
@@ -139,6 +197,9 @@ public class telaTrabalhoController implements Initializable {
     public void atualizarTextAreaServidor(String texto) {
     	textServidor.setText(texto);
     }
+    
+   
+    
     
     //------------------------------------------------------------Metodos Parte Encerrar Conexão--------------------------------------------------------------
     

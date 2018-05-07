@@ -22,7 +22,7 @@ public class Atendente implements Runnable {
 	private Thread thread;
 	File[] files = refreshFiles();
 	String log = "Log: \n";
-	private final String LOCALFILES = "C:\\Users\\pedro\\Documents";
+	private final String LOCALFILES = "C:\\Users\\Pedro\\Documents\\Redes\\Teste";
 	//private final String SAVEFILES = "";
 
 	public Atendente(Socket socket) throws Exception {
@@ -104,9 +104,7 @@ public class Atendente implements Runnable {
 				if ("Fechar".equals(mensagem)) {
 					break;
 				}
-				if ("Data".equals(mensagem)) {
-					out.println(new Date());
-				} else if(foundFile(files, mensagem) > 0) {
+				if(foundFile(files, mensagem) >= 0) {
 					
 					log("Arquivo solicitado: "+mensagem);
 					
@@ -120,9 +118,13 @@ public class Atendente implements Runnable {
 				} else if("Log".equals(mensagem)) {
 					
 					System.out.println(log);
+					out.println(log);
 					
 				} else
-					out.println("Arquivo não encontrado");
+				System.out.println("\n Encerrando conexão TCP [Porta]: "+socket.getPort());
+				log("Encerrando conexão TCP [Porta]: "+socket.getPort());
+				close();
+				
 			} catch (SocketTimeoutException e) {
 				//ignorar
 			}catch (Exception e){
@@ -137,7 +139,7 @@ public class Atendente implements Runnable {
 			close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 	}

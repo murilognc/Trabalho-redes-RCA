@@ -36,13 +36,13 @@ public class Servidor implements Runnable {
 			try{
 				atendente.stop();
 			}catch (Exception e){
-				System.out.println(e);
+				//System.out.println(e);
 			}
 		}
 		try{
 			server.close();
 		}catch (Exception e){
-			System.out.println(e);
+			//System.out.println(e);
 		}
 		
 		server = null;
@@ -92,7 +92,7 @@ public class Servidor implements Runnable {
 			close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 	}

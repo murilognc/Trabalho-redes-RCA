@@ -19,21 +19,19 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="534.0" prefWidth="800.0">
                      <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#222222" height="255.0" layoutX="100.0" layoutY="188.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
-                        <TextField fx:id="diretorioRaiz" layoutX="273.0" layoutY="205.0" prefHeight="37.0" prefWidth="420.0" promptText="Local com arquivos para compartilhamento" styleClass="text-field" />
-                        <Label layoutX="116.0" layoutY="213.0" styleClass="label-bright" text="Diretorio de entrada" />
-                        <Label layoutX="116.0" layoutY="258.0" styleClass="label-bright" text="Diretorio de saída" />
-                        <TextField fx:id="diretorioSalvar" layoutX="273.0" layoutY="250.0" prefHeight="37.0" prefWidth="420.0" promptText="Local para salvar os arquivos recebidos" styleClass="text-field" />
-                        <Button layoutX="307.0" layoutY="392.0" mnemonicParsing="false" onAction="#atualizarParam" styleClass="botoesConfirmacao" text="Atualizar Informações" />
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#222222" height="255.0" layoutX="100.0" layoutY="130.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
+                        <TextField fx:id="diretorioRaiz" layoutX="273.0" layoutY="147.0" prefHeight="37.0" prefWidth="420.0" promptText="Local com arquivos para compartilhamento" styleClass="text-field" />
+                        <Label layoutX="116.0" layoutY="155.0" styleClass="label-bright" text="Diretorio de entrada" />
+                        <Label layoutX="116.0" layoutY="200.0" styleClass="label-bright" text="Diretorio de saída" />
+                        <TextField fx:id="diretorioSalvar" layoutX="273.0" layoutY="192.0" prefHeight="37.0" prefWidth="420.0" promptText="Local para salvar os arquivos recebidos" styleClass="text-field" />
+                        <Button layoutX="340.0" layoutY="335.0" mnemonicParsing="false" onAction="#iniciarPeer" styleClass="botoesConfirmacao" text="Iniciar Peer" />
                         <Label layoutX="80.0" layoutY="57.0" styleClass="label-header" text="Atualize os dados antes de executar">
                            <font>
                               <Font size="27.0" />
                            </font>
                         </Label>
-                        <Label layoutX="116.0" layoutY="303.0" styleClass="label-bright" text="Porta UDP" />
-                        <TextField fx:id="portaUdp" layoutX="273.0" layoutY="295.0" prefHeight="37.0" prefWidth="420.0" promptText="Porta UDP" styleClass="text-field" />
-                        <Label layoutX="116.0" layoutY="348.0" styleClass="label-bright" text="Porta TCP" />
-                        <TextField fx:id="portaTcp" layoutX="273.0" layoutY="340.0" prefHeight="37.0" prefWidth="420.0" promptText="Porta TCP" styleClass="text-field" />
+                        <Label layoutX="116.0" layoutY="245.0" styleClass="label-bright" text="Porta " />
+                        <TextField fx:id="portaUdp" layoutX="273.0" layoutY="237.0" prefHeight="37.0" prefWidth="420.0" promptText="Porta" styleClass="text-field" />
                      </children>
                   </AnchorPane>
             </content>
@@ -48,7 +46,10 @@
                         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#474241" height="475.0" layoutX="386.0" layoutY="57.0" stroke="BLACK" strokeType="INSIDE" width="400.0" />
                         <TextField fx:id="comandoUdp" layoutX="17.0" layoutY="181.0" prefHeight="37.0" prefWidth="362.0" promptText="Insira o comando / Nome Arquivo" />
                         <Button layoutX="137.0" layoutY="224.0" mnemonicParsing="false" onAction="#enviarUdp" styleClass="botoesConfirmacao" text="Confirmar" />
-                        <TextArea fx:id="textServidor" layoutX="390.0" layoutY="77.0" prefHeight="451.0" prefWidth="391.0" />
+                        <TextArea fx:id="textServidor" editable="false" layoutX="390.0" layoutY="77.0" prefHeight="451.0" prefWidth="391.0" text="Respostas do servidor serão exibidas após enviar algum comando" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextArea>
                         <Label layoutX="532.0" layoutY="57.0" styleClass="label-bright" text="Resposta Servidor" />
                         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#474241" height="105.0" layoutX="13.0" layoutY="57.0" stroke="BLACK" strokeType="INSIDE" width="183.0" />
                         <Label layoutX="20.0" layoutY="61.0" styleClass="label-bright" text="Lista de comandos UDP:" />
@@ -66,13 +67,13 @@
                         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#474241" height="269.0" layoutX="13.0" layoutY="265.0" stroke="BLACK" strokeType="INSIDE" width="371.0" />
                         <Label layoutX="20.0" layoutY="264.0" styleClass="label-bright" text="Enviar comando TCP" />
                         <TextField fx:id="comandoTcp" layoutX="17.0" layoutY="284.0" prefHeight="37.0" prefWidth="362.0" promptText="Insira o comando" />
-                        <TextField fx:id="ipDestino" layoutX="18.0" layoutY="341.0" prefHeight="37.0" prefWidth="362.0" promptText="Insira o IP" />
-                        <TextField fx:id="arquivo" layoutX="18.0" layoutY="456.0" prefHeight="37.0" prefWidth="362.0" promptText="Nome do arquivo" />
-                        <Button layoutX="137.0" layoutY="497.0" mnemonicParsing="false" onAction="#enviarTcp" styleClass="botoesConfirmacao" text="Confirmar" />
+                        <TextField fx:id="ipDestino" disable="true" layoutX="18.0" layoutY="341.0" prefHeight="37.0" prefWidth="362.0" promptText="Insira o IP" />
+                        <TextField fx:id="arquivo" disable="true" layoutX="18.0" layoutY="456.0" prefHeight="37.0" prefWidth="362.0" promptText="Nome do arquivo" />
+                        <Button layoutX="137.0" layoutY="497.0" mnemonicParsing="false" onAction="#enviarUdp" styleClass="botoesConfirmacao" text="Confirmar" />
                         <Label layoutX="20.0" layoutY="379.0" styleClass="label-bright" text="(Caso contenha)" />
                         <Label layoutX="20.0" layoutY="321.0" styleClass="label-bright" text="(Caso contenha)" />
                         <Label layoutX="20.0" layoutY="435.0" styleClass="label-bright" text="(Caso contenha)" />
-                        <TextField fx:id="maquinaDestino" layoutX="18.0" layoutY="398.0" prefHeight="37.0" prefWidth="362.0" promptText="Nome da máquina" />
+                        <TextField fx:id="maquinaDestino" disable="true" layoutX="18.0" layoutY="398.0" prefHeight="37.0" prefWidth="362.0" promptText="Nome da máquina" />
                      </children>
                   </AnchorPane>
             </content>

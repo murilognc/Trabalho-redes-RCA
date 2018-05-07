@@ -27,14 +27,14 @@ public class Teste implements Runnable {
 	private Thread thread;
 	//private List<Atendente> atendentes;
 	static InetAddress IPrecebido;
-	File[] files = refreshFiles();
+	static File[] files = refreshFiles();
 	String log = "Log: \n";
 	private int socket = 2525;
 	private final int SOCKETSERVIDOR = 6969;
 	private static int socketRecebimento = 2929;
 	private final static int SOCKETSERVIDOR_RECEBER = 6565;
-	private final static String LOCALFILES = "C:\\Users\\pedro\\Documents";
-	private final static String SAVEFILES = "C:\\Users\\Pedro\\Documents\\Teste\\";
+	private final static String LOCALFILES = "C:\\Users\\muril\\Desktop\\Análise de Algoritmos";
+	private final static String SAVEFILES = "C:\\Users\\muril\\Desktop\\Nova pasta";
 
 
 	public Teste(int porta) throws Exception{
@@ -60,7 +60,7 @@ public class Teste implements Runnable {
 		try{
 			server.close();
 		}catch (Exception e){
-			System.out.println(e);
+			//System.out.println(e);
 		}
 
 		server = null;
@@ -125,11 +125,17 @@ public class Teste implements Runnable {
 					//String mensagem = in.readLine();
 
 
-					if ("Arquivos".equals(sentence)) {
+					if("Nos".equals(sentence)) {
+						
+						serverSocket.send(pacote(InetAddress.getLocalHost().toString(), IP, porta));
+						serverSocket.send(pacote("Fim do envio", IP, porta));
+
+					}
+					else if ("Arquivos".equals(sentence)) {
 
 						System.out.println("\n Enviando nomes...");
 						log("Enviando nomes...");
-						this.refreshFiles();
+						refreshFiles();
 
 						for(int i = 0; i < files.length; i++){
 
@@ -140,17 +146,22 @@ public class Teste implements Runnable {
 						msg();
 						log("Terminado");
 
+					} else if (foundFile(files, sentence) >= 0) {
+
+						serverSocket.send(pacote("Possuo arquivo: "+files[foundFile(files, sentence)].length()+" bytes", IP, porta));
+						serverSocket.send(pacote("Fim do envio", IP, porta));
+
 					} else if ("Conexao".equals(sentence)){
 
 						if(!servidorAberto) {
 
 							servidorAberto = true;
 							System.out.println("\n Iniciando o servidor TCP");
-							msg();
 							log("Iniciando o servidor TCP");
 							Servidor servidor = new Servidor(SOCKETSERVIDOR);
 							servidor.start();
-
+							msg();
+							
 						} 
 						else {
 							System.out.println("\n Servidor TCP já iniciado");
@@ -158,7 +169,7 @@ public class Teste implements Runnable {
 							log("Iniciando o servidor TCP");
 						}
 
-						serverSocket.send(pacote("", IP, porta));
+						serverSocket.send(pacote("IniciarTCP:"+InetAddress.getLocalHost()+"*", IP, porta));
 
 
 					}else if ("Log".equals(sentence)){
@@ -180,7 +191,7 @@ public class Teste implements Runnable {
 				}catch (SocketTimeoutException e) {
 					//ignorar
 				}catch (Exception e){
-					System.out.print(e);
+					//System.out.print(e);
 				}
 
 			}
@@ -213,6 +224,11 @@ public class Teste implements Runnable {
 				if(msg.equals("Fechar")) {
 
 					break;
+				} 	else if (foundFile(files, msg) >= 0) {
+
+					System.out.println("Arquivo no local");
+					continue;
+
 				}
 
 				clientSocket.send(pacote(msg, InetAddress.getByName("255.255.255.255"), socketRecebimento));
@@ -224,19 +240,25 @@ public class Teste implements Runnable {
 					msgRecebida = pacoteRecebido(clientSocket, msgRecebida);
 					System.out.println("De["+IPrecebido+"]: " + msgRecebida);
 
-				}while(!"Fim do envio".equals(msgRecebida.trim()) && !"IniciarTCP".equals(msgRecebida.trim()));
+
+				}while(!"Fim do envio".equals(msgRecebida.trim()) && !"IniciarTCP".equals(msgRecebida.trim().substring(0,10)) && !"".equals(msgRecebida.trim()));
 
 				System.out.println("Mensagem completa");
+				String usuario = "";
 
-
-				if("IniciarTCP".equals(msgRecebida.trim())) {
+				
+				if("IniciarTCP".equals(msgRecebida.trim().substring(0,10))) {
+					
+					usuario = msgRecebida.trim().substring(11,  marcador(msgRecebida));
+					System.out.println(usuario);
+					
 
 					System.out.println("Iniciando cliente TCP");
 					System.out.println("Iniciando conexão com o servidor");
-					Socket socket = new Socket ("localhost", SOCKETSERVIDOR_RECEBER);
+					Socket socket = new Socket (usuario, SOCKETSERVIDOR_RECEBER);
+
 
 					System.out.println("\n Conexão estabelecida");
-					msg();
 
 					InputStream input = socket.getInputStream();
 					OutputStream output = socket.getOutputStream();
@@ -250,12 +272,23 @@ public class Teste implements Runnable {
 						String mensagem = scan.nextLine();
 						out.println(mensagem);
 
+						
+						
 						if("Fechar".equals(mensagem)){
 							break;
 						}
-						else{
-
+						
+						//mensagem = in.readLine();
+						//System.out.println(mensagem);
+						
+						if ("Arquivo não encontrado".equals(mensagem)){
+							
+							System.out.println(mensagem);
+							
+						} else { 
+							
 							receiveFile(input, mensagem);
+							
 						}
 
 						System.out.println("Mensagem recebida do servidor: " + mensagem);
@@ -273,13 +306,13 @@ public class Teste implements Runnable {
 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 
@@ -332,7 +365,7 @@ public class Teste implements Runnable {
 		bos.close();
 	}
 
-	public File[] refreshFiles() {
+	public static File[] refreshFiles() {
 
 		File folder = new File(LOCALFILES);
 		File[] listOfFiles = folder.listFiles();
@@ -342,7 +375,7 @@ public class Teste implements Runnable {
 	}
 
 	//Recebe um array de files e um nome para buscar, retorna a posição ou -1 se nao achar
-	public int foundFile(File[] files, String name){
+	public static int foundFile(File[] files, String name){
 
 		for (int i = 0; i < files.length; i++) {
 
@@ -358,8 +391,24 @@ public class Teste implements Runnable {
 	public void log(String s) {
 		this.log += new Date()+" "+s+"\n";
 	}
-	
+
 	public static void msg() {
 		System.out.print("Mensagem[UDP]: ");
+	}
+	
+	public static int marcador(String msg) {
+		
+		String marca = "";
+		
+		for(int i = 0; i < msg.length(); i++) {
+			
+			marca = msg.substring(i,(i+1));
+			
+			if(marca.equals("/")) {
+			return i;
+			}
+		}
+		
+		return 0;
 	}
 }

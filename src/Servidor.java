@@ -83,7 +83,7 @@ public class Servidor implements Runnable {
 				
 				
 			}catch(Exception e){
-				System.out.println(e);
+				System.out.println(e+"ll");
 				break;
 			}
 			

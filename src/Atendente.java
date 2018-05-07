@@ -22,6 +22,8 @@ public class Atendente implements Runnable {
 	private Thread thread;
 	File[] files = refreshFiles();
 	String log = "Log: \n";
+	private final String LOCALFILES = "C:\\Users\\pedro\\Documents";
+	//private final String SAVEFILES = "";
 
 	public Atendente(Socket socket) throws Exception {
 		this.socket = socket;
@@ -109,10 +111,11 @@ public class Atendente implements Runnable {
 					log("Arquivo solicitado: "+mensagem);
 					
 					send(socket.getOutputStream(), foundFile(files, mensagem));
+					System.out.println("Termino do envio");
 					log("Termino do envio");
-					//System.out.println("Encerrando conexão TCP [Porta]: "+socket.getPort());
-					//log("Encerrando conexão TCP [Porta]: "+socket.getPort());
-					//close();
+					System.out.println("\n Encerrando conexão TCP [Porta]: "+socket.getPort());
+					log("Encerrando conexão TCP [Porta]: "+socket.getPort());
+					close();
 					
 				} else if("Log".equals(mensagem)) {
 					
@@ -123,13 +126,13 @@ public class Atendente implements Runnable {
 			} catch (SocketTimeoutException e) {
 				//ignorar
 			}catch (Exception e){
-				System.out.print(e);
+				//System.out.print(e);
 				break;
 			}
 		}
 
-		System.out.println("Encerrando conexão TCP [Porta]: "+socket.getPort());
-		log("Encerrando conexão TCP [Porta]: "+socket.getPort());
+		//System.out.println("Encerrando conexão TCP [Porta]: "+socket.getPort());
+		//log("Encerrando conexão TCP [Porta]: "+socket.getPort());
 		try {
 			close();
 		} catch (Exception e) {
@@ -182,7 +185,7 @@ public class Atendente implements Runnable {
 	//Atualiza a lista de arquivos
 	public File[] refreshFiles() {
 
-		File folder = new File("C:\\Users\\pedro\\Documents");
+		File folder = new File(LOCALFILES);
 		File[] listOfFiles = folder.listFiles();
 		
 		return listOfFiles;
